@@ -170,6 +170,7 @@ public class MemberTable extends JFrame implements ActionListener{
 		JButton btnNewButton_2 = new JButton("삭제");
 		panel_3.add(btnNewButton_2);
 		
+		
 		JPanel panel_6 = new JPanel();
 		tabbedPane.addTab("회원전체조회", null, panel_6, null);
 		panel_6.setLayout(new BorderLayout(0, 0));
@@ -185,6 +186,8 @@ public class MemberTable extends JFrame implements ActionListener{
 		
 		//회원등록 화면의 성별
 		txtGender.addActionListener(this);
+		//회원 삭제
+		btnNewButton_2.addActionListener(this);
 	}
 	
 	public DefaultTableModel getModel() {
@@ -236,10 +239,23 @@ public class MemberTable extends JFrame implements ActionListener{
 			MemberVO vo =dao.getRow(no);
 			Object[] rowData = {vo.getNo(),vo.getName(),vo.getAge(),vo.getGender()};
 			model1.addRow(rowData);
+		}else if(e.getActionCommand().equals("삭제")) {
+			//사용자가 입력한 번호 가져오기
+			int no =Integer.parseInt(textField_3.getText());
+			//해당하는 회원 삭제해주기
+			int result=dao.remove(no);
+			if(result>0) { //성공
+				JOptionPane.showMessageDialog(this, "삭제성공");
+				//모델이 가지고 있었던 데이터 초기화
+				model.setNumRows(0);
+				textField_3.setText("");
+				list();
+			}else { //실패
+				JOptionPane.showMessageDialog(this, "삭제실패");
 		}
 		
 	}
-
+	}
 }
 
 
