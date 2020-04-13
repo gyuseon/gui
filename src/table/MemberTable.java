@@ -38,6 +38,7 @@ public class MemberTable extends JFrame implements ActionListener{
 	
 	private MemberDAO dao;
 	private DefaultTableModel model;
+	private DefaultTableModel model1;
 
 	/**
 	 * Launch the application.
@@ -119,9 +120,13 @@ public class MemberTable extends JFrame implements ActionListener{
 		
 		JButton btnNewButton = new JButton("조회");
 		panel_4.add(btnNewButton);
+		btnNewButton.addActionListener(this);
 		
-		table = new JTable(getModel());
-		panel_1.add(table, BorderLayout.CENTER);
+		model1 =getModel();
+		table = new JTable(model1);
+		JScrollPane scrollPanel = new JScrollPane();
+		scrollPanel.setViewportView(table);
+		panel_1.add(scrollPanel, BorderLayout.CENTER);
 		
 		JPanel panel_2 = new JPanel();
 		tabbedPane.addTab("회원수정", null, panel_2, null);
@@ -224,6 +229,13 @@ public class MemberTable extends JFrame implements ActionListener{
 			}else { //실패
 				JOptionPane.showMessageDialog(this, "입력실패");
 			}
+		}else if(e.getActionCommand().equals("조회")) {
+			//사용자가 입력한 번호 가져오기
+			int no =Integer.parseInt(textField.getText());
+			//번호에 해당하는 정보 가져온 후 보여주기
+			MemberVO vo =dao.getRow(no);
+			Object[] rowData = {vo.getNo(),vo.getName(),vo.getAge(),vo.getGender()};
+			model1.addRow(rowData);
 		}
 		
 	}

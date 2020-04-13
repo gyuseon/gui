@@ -19,7 +19,7 @@ public class MemberDAO {
 	
 	//커넥션 연결
 	public Connection getConnection() {
-		String url="jdbc:orcle:thin:@localhost:1521:orcl"; //데이터베이스 서버 주소 및 연결문자열
+		String url="jdbc:oracle:thin:@localhost:1521:orcl"; //데이터베이스 서버 주소 및 연결문자열
 		String user="javadb";  // 허가받은 사용자 아이디
 		String password="12345";  //비밀번호
 		
@@ -54,6 +54,49 @@ public class MemberDAO {
 			e.printStackTrace();
 		}
 		return vecList;
+	}
+	
+	public int insert(MemberVO vo) {
+		String sql="insert into memberTBL values(member_seq.nextval,?,?,?)";
+		int result=0;
+		try (Connection con = getConnection();
+			 PreparedStatement pstmt =con.prepareStatement(sql)) {
+			
+			pstmt.setString(1, vo.getName());
+			pstmt.setInt(2, vo.getAge());
+			pstmt.setString(3, vo.getGender());
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	//no에 해당하는 레코드 가져오기
+	public MemberVO getRow(int no) {
+		String sql = "select * from memberTBL where no=?";
+		MemberVO vo= null;
+		try (Connection con =getConnection();
+			 PreparedStatement pstmt=con.prepareStatement(sql)) {
+				 
+			 pstmt.setInt(1, no);
+			 ResultSet rs = pstmt.executeQuery();
+			
+			
+			if(rs.next()) {
+				vo=new MemberVO();
+				vo.setNo(rs.getInt(1));
+				vo.setName(rs.getString("name"));
+				vo.setAge(rs.getInt(3));
+				vo.setGender(rs.getString("gender"));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return vo;
 	}
 
 }
